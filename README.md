@@ -23,8 +23,6 @@
 - `nonce`: 12 字节 GCM nonce
 - `plaintext`: 任意长度明文
 
-### 使用前编译
-
 ### Go 示例代码
 
 ```go
