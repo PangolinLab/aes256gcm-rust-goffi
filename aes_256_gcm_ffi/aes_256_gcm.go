@@ -11,7 +11,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
 	"regexp"
+	"runtime"
 	"unsafe"
 )
 
@@ -25,6 +28,26 @@ const (
 var (
 	hexRegex = regexp.MustCompile(`^[0-9a-fA-F]+$`)
 )
+
+func init() {
+	var libPath string
+	switch runtime.GOOS {
+	case "windows":
+		libPath = "bin/aes_256_gcm.dll"
+	case "darwin":
+		libPath = "bin/libaes_256_gcm.dylib"
+	default:
+		libPath = "bin/libaes_256_gcm.so"
+	}
+
+	if _, err := os.Stat(libPath); os.IsNotExist(err) {
+		cmd := exec.Command("cargo", "build", "--release", "--target-dir", "bin")
+		cmd.Dir = ".." // Rust 代码目录相对路径
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		_ = cmd.Run()
+	}
+}
 
 // isValidHex checks if a string is a valid hexadecimal string
 func isValidHex(s string) (bool, error) {
