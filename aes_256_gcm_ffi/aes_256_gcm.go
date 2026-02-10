@@ -1,3 +1,6 @@
+//go:build cgo
+// +build cgo
+
 package aes_256_gcm_ffi
 
 /*
